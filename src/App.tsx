@@ -5,6 +5,7 @@ import "./App.css";
 import "./index.css";
 
 import { Header } from "./components/Header";
+import { Login } from "./components/Login";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Header />}></Route>
         <Route path='*' element={<h1>Page Not Found</h1>}></Route>
+        <Route path='/login' element={<Login />}></Route>
       </Routes>
     </div>
   );
