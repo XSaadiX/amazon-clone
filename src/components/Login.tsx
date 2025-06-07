@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import "./Login.css";
 import Logo from "../images/Amazon_logo.svg.png";
 import React from "react";
-import { useState, useEffect, useRef } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase"; // Adjust the import path as necessary
-import { useAuth } from "./context/GlobalState";
+import { useState } from "react";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
@@ -13,6 +15,18 @@ export const Login = () => {
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
+  const signIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        if (auth) {
+          navigate("/");
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
   const register = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     createUserWithEmailAndPassword(auth, email, password)
@@ -48,7 +62,7 @@ export const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button type='submit' className='login-signInBtn'>
+          <button type='submit' className='login-signInBtn' onClick={signIn}>
             Sign In
           </button>
           <p>

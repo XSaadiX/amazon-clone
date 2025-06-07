@@ -1,13 +1,19 @@
-import React, { use } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import Logo from "../images/White-Amazon-Logo-PNG.png";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
-import { useAuth } from "./context/GlobalState"; // Adjust the import path as necessary
+import { useAuth } from "../context/GlobalState";
+import { auth } from "../firebase";
 
 export const Header = () => {
-  const user = useAuth(); // Assuming useAuth is a custom hook that provides user info
+  const { user, basket } = useAuth();
+
+  const handleAuthentication = () => {
+    if (user) {
+      auth.signOut();
+    }
+  };
   return (
     <div className='header'>
       <Link to='/'>
@@ -18,12 +24,14 @@ export const Header = () => {
         <SearchIcon className='header-searchIcon' />
       </div>
       <div className='header-nav'>
-        <Link to='/login'>
-          <div className='header-option'>
+        <Link to={!user ? "/login" : "#"}>
+          <div className='header-option' onClick={handleAuthentication}>
             <div className='header-optionLineOne'>
-              Hello {`user ? email : "Guest"`}///
+              Hello {user ? user : "Guest"}
             </div>
-            <div className='header-optionLineTwo'>Sign In</div>
+            <div className='header-optionLineTwo'>
+              {user ? "Sign Out" : "Sign In"}
+            </div>
           </div>
         </Link>
         <Link to='/orders'>
@@ -39,7 +47,9 @@ export const Header = () => {
         <Link to='/checkout'>
           <div className='header-optionBasket'>
             <ShoppingBasketIcon className='header-cartIcon' />
-            <span className='header-optionLineTwo header-basketCount'>6</span>
+            <span className='header-optionLineTwo header-basketCount'>
+              {basket.length > 0 ? basket.length : 0}
+            </span>
           </div>
         </Link>
       </div>
