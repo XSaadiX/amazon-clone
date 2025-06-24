@@ -44,7 +44,7 @@ function Home() {
               image={product.image}
               price={product.price}
               category={product.category}
-              rating={5}
+              rating={Math.floor(Math.random() * 5) + 1} // Random rating between 1 and 5
             />
           ))}
         </div>
@@ -57,7 +57,7 @@ function Home() {
               image={product.image}
               price={product.price}
               category={product.category}
-              rating={3}
+              rating={Math.floor(Math.random() * 5) + 1}
             />
           ))}
         </div>
@@ -70,7 +70,7 @@ function Home() {
               image={product.image}
               price={product.price}
               category={product.category}
-              rating={4}
+              rating={Math.floor(Math.random() * 6) + 1}
             />
           ))}
         </div>
