@@ -53,9 +53,7 @@ function Product({ id, title, price, image, rating, category }: ProductProps) {
           <strong>{price}</strong> {/* Use prop instead of hardcoded */}
         </p>
       </div>
-      <div className='product-rating'>
-        {renderStars()} {/* Dynamic star rating */}
-      </div>
+      <div className='product-rating'>{renderStars()}</div>
       <img src={image} alt={title} className='product-image' /> {/* Use prop */}
       <button className='product-button' onClick={addToBasket}>
         Add to Basket
@@ -63,5 +61,4 @@ function Product({ id, title, price, image, rating, category }: ProductProps) {
     </div>
   );
 }
-
 export default Product;
