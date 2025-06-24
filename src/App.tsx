@@ -8,6 +8,7 @@ import { Login } from "./components/Login";
 import { useAuth } from "./context/GlobalState";
 import { auth } from "./firebase"; // Adjust the import path as necessary
 import Home from "./components/Home";
+import Checkout from "./components/Checkout";
 
 function App() {
   const { dispatch } = useAuth();
@@ -38,6 +39,14 @@ function App() {
             </>
           }></Route>
         <Route path='*' element={<h1>Page Not Found</h1>}></Route>
+        <Route
+          path='/checkout'
+          element={
+            <>
+              <Header />
+              <Checkout />
+            </>
+          }></Route>
         <Route path='/login' element={<Login />}></Route>
       </Routes>
     </div>
