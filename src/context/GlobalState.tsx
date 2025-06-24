@@ -4,7 +4,7 @@ import AppReducer, {
   initialState,
   type Action,
   type State,
-  type BasketItem, // ← Add this import
+  type BasketItem,
 } from "./AppReducer";
 
 // Define the context value type

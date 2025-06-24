@@ -74,5 +74,10 @@ function AppReducer(state = initialState, action: Action): State {
       return state;
   }
 }
+export const getBasketTotal = (basket: BasketItem[]): number => {
+  return basket.reduce((amount, item) => {
+    return item.price * item.quantity + amount;
+  }, 0);
+};
 
 export default AppReducer;
