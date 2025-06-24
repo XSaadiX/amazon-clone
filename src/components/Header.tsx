@@ -7,10 +7,10 @@ import { useAuth } from "../context/GlobalState";
 import { auth } from "../firebase";
 
 export const Header = () => {
-  const { user, basket } = useAuth();
+  const { state, basket } = useAuth();
 
   const handleAuthentication = () => {
-    if (user) {
+    if (state.user) {
       auth.signOut();
     }
   };
@@ -24,13 +24,13 @@ export const Header = () => {
         <SearchIcon className='header-searchIcon' />
       </div>
       <div className='header-nav'>
-        <Link to={!user ? "/login" : "#"}>
+        <Link to={!state.user ? "/login" : "#"}>
           <div className='header-option' onClick={handleAuthentication}>
             <div className='header-optionLineOne'>
-              Hello {user ? user : "Guest"}
+              Hello {state.user ? state.user : "Guest"}
             </div>
             <div className='header-optionLineTwo'>
-              {user ? "Sign Out" : "Sign In"}
+              {state.user ? "Sign Out" : "Sign In"}
             </div>
           </div>
         </Link>
