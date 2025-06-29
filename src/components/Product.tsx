@@ -12,7 +12,7 @@ interface ProductProps {
 }
 
 function Product({ id, title, price, image, rating, category }: ProductProps) {
-  const { dispatch, basket } = useAuth();
+  const { dispatch } = useAuth();
 
   const addToBasket = () => {
     dispatch({
@@ -26,7 +26,7 @@ function Product({ id, title, price, image, rating, category }: ProductProps) {
         category: category,
       },
     });
-  }; // Assuming useAuth is imported from context
+  };
 
   const renderStars = () => {
     const stars = [];

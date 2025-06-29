@@ -12,21 +12,28 @@ function Checkout() {
       <div className='check-outleft'>
         <img className='checkout-ad' src={checkoutAd}></img>
 
-        <div>
-          <h3>Hello, {state.user ? state.user : "Guest"}</h3>
+        <div className='checkout-container'>
+          <h2>Hello, {state.user ? state.user : "Guest"}</h2>
           <h2 className='checkout-title'>Your Shopping Basket</h2>
-          <p className='checkout-subtitle'>
-            The items in your basket are ready to be purchased.
-          </p>
-          {basket.map((item) => (
-            <CheckoutProduct
-              key={item.id}
-              title={item.title}
-              image={item.image}
-              price={item.price}
-              rating={item.rating}
-            />
-          ))}
+
+          {basket.length != 0 ? (
+            basket.map((item) => (
+              <CheckoutProduct
+                id={item.id}
+                key={item.id}
+                title={item.title}
+                image={item.image}
+                price={item.price}
+                rating={item.rating}
+              />
+            ))
+          ) : (
+            <p>
+              {" "}
+              Your basket is empty, Click add to basket in home page to add
+              items
+            </p>
+          )}
         </div>
       </div>
       <div className='checkout-right'>

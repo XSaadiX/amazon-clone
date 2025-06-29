@@ -1,5 +1,3 @@
-// import { Product } from "../Components/Context/AppReducer";
-
 export interface Product {
   id: number;
   title: string;

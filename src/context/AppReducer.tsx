@@ -50,7 +50,20 @@ interface AddToBasketAction {
   };
 }
 
-export type Action = SetUserAction | SetProductAction | AddToBasketAction;
+interface RemoveFromBasketAction {
+  type: "REMOVE_FROM_BASKET";
+  id: number;
+}
+interface EmptyBasketAction {
+  type: "EMPTY_BASKET";
+}
+
+export type Action =
+  | SetUserAction
+  | SetProductAction
+  | AddToBasketAction
+  | RemoveFromBasketAction
+  | EmptyBasketAction;
 
 function AppReducer(state = initialState, action: Action): State {
   switch (action.type) {
@@ -69,6 +82,17 @@ function AppReducer(state = initialState, action: Action): State {
       return {
         ...state,
         basket: [...state.basket, { ...action.item, quantity: 1 }],
+      };
+
+    case "REMOVE_FROM_BASKET":
+      return {
+        ...state,
+        basket: state.basket.filter((item) => item.id !== action.id),
+      };
+    case "EMPTY_BASKET":
+      return {
+        ...state,
+        basket: [],
       };
     default:
       return state;

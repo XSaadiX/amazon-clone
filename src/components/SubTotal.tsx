@@ -8,6 +8,7 @@ import "./SubTotal.css";
 function SubTotal() {
   const { basket } = useAuth();
   const navigate = useNavigate();
+
   return (
     <div className='subtotal'>
       <NumericFormat

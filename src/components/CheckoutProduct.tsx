@@ -1,7 +1,9 @@
 import StarIcon from "@mui/icons-material/Star";
 import "./CheckoutProduct.css"; // Assuming you have a CSS file for styling
+import { useAuth } from "../context/GlobalState";
 
 interface CheckoutProductProps {
+  id: number;
   key: number;
   title: string;
   image: string;
@@ -10,7 +12,7 @@ interface CheckoutProductProps {
 }
 
 function CheckoutProduct({
-  key,
+  id,
   title,
   image,
   price,
@@ -32,7 +34,14 @@ function CheckoutProduct({
     return stars;
   };
 
-  const handleRemoveFromBasket = () => {};
+  const { dispatch } = useAuth();
+
+  const handleRemoveFromBasket = () => {
+    dispatch({
+      type: "REMOVE_FROM_BASKET",
+      id: id,
+    });
+  };
 
   return (
     <div className='checkoutProduct'>
