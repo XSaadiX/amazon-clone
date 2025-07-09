@@ -1,13 +1,21 @@
 import React from "react";
-import "./Payment.css"; // Ensure you have a CSS file for styling
-import { Link } from "react-router-dom"; // Import Link for navigation
-import { useAuth } from "../context/GlobalState"; // Assuming you have a context for global state management
+import "./Payment.css";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/GlobalState";
 import CheckoutProduct from "./CheckoutProduct";
 import { NumericFormat } from "react-number-format";
 import { getBasketTotal } from "../context/AppReducer";
-
+import { CardElement } from "@stripe/react-stripe-js";
+import type { StripeCardElementChangeEvent } from "@stripe/stripe-js";
 function Payment() {
-  const { basket, state } = useAuth(); // Assuming useAuth provides the basket state
+  const { basket, state } = useAuth();
+  const handleChange = (event: StripeCardElementChangeEvent) => {
+    console.log(event);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
   return (
     <div className='payment'>
       <div className='payment-container'>
@@ -49,14 +57,16 @@ function Payment() {
           <h3>Payment Method</h3>
 
           <div className='payment-details'>
-            <form>
-              <p>Card Details</p>
-              <input type='text' placeholder='Card Number' />
-              <input type='text' placeholder='Name on Card' />
-              <input type='text' placeholder='Expiry Date (MM/YY)' />
-              <input type='text' placeholder='CVV' />
+            <p>Card Details</p>
+            <input type='text' placeholder='Card Number' />
+            <input type='text' placeholder='Name on Card' />
+            <input type='text' placeholder='Expiry Date (MM/YY)' />
+            <input type='text' placeholder='CVV' />
 
-              {/* Add more payment details as needed */}
+            {/* Add more payment details as needed */}
+            <form className='payment-detailsForm' onSubmit={handleSubmit}>
+              <CardElement onChange={handleChange} />
+              {/* Stripe Card Element for secure card input */}
               <div className='payment-priceContainer'>
                 <NumericFormat
                   renderText={(value) => (
