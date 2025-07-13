@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   description: string;
   category: string;
+  rating: number;
 }
 
 export interface BasketItem {
@@ -16,9 +17,15 @@ export interface BasketItem {
   category: string;
   quantity: number;
 }
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+}
+
 export interface State {
   basket: BasketItem[];
-  user: string | null;
+  user: User | null;
   products: Product[];
 }
 
@@ -30,7 +37,7 @@ export const initialState: State = {
 
 interface SetUserAction {
   type: "SET_USER";
-  user: string | null;
+  user: User | null;
 }
 
 interface SetProductAction {

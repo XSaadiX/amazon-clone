@@ -26,16 +26,36 @@ app.get("/", (req, res) => {
 });
 
 app.post("/payments/create", async (req, res) => {
-  const total = req.body.total;
-  console.log("Payment Request Received for this amount >>>", total);
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: total,
-    currency: "usd",
-    // Optional: Add more payment intent options here
-  });
-  res.status(201).send({
-    clientSecret: paymentIntent.client_secret,
-  });
+  try {
+    const total = req.body.total;
+    console.log("Payment Request Received for this amount >>>", total);
+
+    if (!total || total <= 0) {
+      res.status(400).send({
+        error: "Invalid amount. Total must be greater than 0.",
+      });
+      return;
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: total,
+      currency: "usd",
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    console.log("Payment intent created successfully:", paymentIntent.id);
+
+    res.status(201).send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.error("Error creating payment intent:", error);
+    res.status(500).send({
+      error: "Failed to create payment intent",
+    });
+  }
 });
 
 // Here you would add your payment processing logic using Stripe or another payment processor

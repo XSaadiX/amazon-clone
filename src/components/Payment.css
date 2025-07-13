@@ -23,8 +23,26 @@
 .payment-details {
   flex: 0.8;
 }
-.payment-detaills > form {
+.payment-details > form {
   max-width: 400px;
+}
+
+.payment-card-section {
+  margin-bottom: 20px;
+}
+
+.payment-card-section > p {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.payment-error {
+  color: red;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid red;
+  border-radius: 4px;
+  background-color: #ffebee;
 }
 .payment-details .payment-priceContainer > h3 {
   padding-top: 20px;
@@ -39,4 +57,15 @@
   border-color: #a88734 #9c7e31 #846a29;
   color: #111;
   cursor: pointer;
+}
+
+.payment-details > form > div > button:disabled {
+  background-color: #cccccc;
+  border-color: #999999;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.payment-details > form > div > button:hover:not(:disabled) {
+  background-color: #ddb347;
 }
