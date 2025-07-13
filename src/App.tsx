@@ -39,7 +39,6 @@ function App() {
               <Home />
             </>
           }></Route>
-        <Route path='*' element={<h1>Page Not Found</h1>}></Route>
         <Route
           path='/checkout'
           element={
@@ -57,6 +56,7 @@ function App() {
             </>
           }></Route>
         <Route path='/login' element={<Login />}></Route>
+        <Route path='*' element={<h1>Page Not Found</h1>}></Route>
       </Routes>
     </div>
   );

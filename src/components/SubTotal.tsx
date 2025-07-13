@@ -1,4 +1,3 @@
-import React from "react";
 import { NumericFormat } from "react-number-format";
 import { useAuth } from "../context/GlobalState";
 import { getBasketTotal } from "../context/AppReducer";

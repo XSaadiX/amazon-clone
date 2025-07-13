@@ -7,10 +7,34 @@ import { NumericFormat } from "react-number-format";
 import { getBasketTotal } from "../context/AppReducer";
 import { CardElement } from "@stripe/react-stripe-js";
 import type { StripeCardElementChangeEvent } from "@stripe/stripe-js";
+import { useEffect } from "react";
+import axios from "./axios"; // Import the axios instance for API calls
+import { useStripe } from "@stripe/react-stripe-js";
+
 function Payment() {
   const { basket, state } = useAuth();
+  const [clientSecret, setClientSecret] = React.useState("");
+  const [error, setError] = React.useState<string | null>(null);
+  const [disabled, setDisabled] = React.useState(true);
+  const [succeeded, setSucceeded] = React.useState(false);
+  const [processing, setProcessing] = React.useState(false);
+  const stripe = useStripe();
+  useEffect(() => {
+    const getClientSecret = async () => {
+      const response = await axios({
+        method: "post",
+        url: `/payments/create?total=${getBasketTotal(basket) * 100}`,
+      });
+      setClientSecret(response.data.clientSecret);
+      return response;
+    };
+    getClientSecret();
+  }, [basket]);
+
   const handleChange = (event: StripeCardElementChangeEvent) => {
-    console.log(event);
+    setDisabled(event.empty);
+    setError(event.error ? event.error.message : "");
+    // Update the error state if there's an error with the card input
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -80,8 +104,22 @@ function Payment() {
                   thousandSeparator={true}
                   prefix={"$"}
                 />
-                <button>Proceed to Payment</button>
+                <button
+                  type='submit'
+                  disabled={
+                    !stripe || !clientSecret || succeeded || processing
+                  }>
+                  <span>
+                    {processing ? (
+                      <p>Processing...</p>
+                    ) : (
+                      <p>Proceed to Payment</p>
+                    )}
+                  </span>
+                </button>
               </div>
+              {error && <div className='payment-error'>{error}</div>}
+              {/* Display any error messages */}
             </form>
           </div>
         </div>
