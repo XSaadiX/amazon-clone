@@ -20,6 +20,7 @@ function Payment() {
   const [succeeded, setSucceeded] = React.useState(false);
   const [processing, setProcessing] = React.useState(false);
   const [cardComplete, setCardComplete] = React.useState(false);
+  const [loadingPayment, setLoadingPayment] = React.useState(true);
   const stripe = useStripe();
   const elements = useElements();
   const Navigate = useNavigate();
@@ -27,14 +28,21 @@ function Payment() {
     const getClientSecret = async () => {
       if (basket.length === 0) {
         console.log("Basket is empty, skipping payment intent creation");
+        setLoadingPayment(false);
         return; // Don't make API call if basket is empty
       }
 
+      setLoadingPayment(true);
       try {
         console.log(
           "Creating payment intent for:",
           getBasketTotal(basket) * 100
         );
+        console.log(
+          "Making request to:",
+          axios.defaults.baseURL + "/payments/create"
+        );
+
         const response = await axios({
           method: "post",
           url: `/payments/create`,
@@ -46,16 +54,26 @@ function Payment() {
 
         if (response.data.clientSecret) {
           setClientSecret(response.data.clientSecret);
+          console.log("Client secret set successfully");
         } else {
           throw new Error("No client secret received");
         }
       } catch (error: unknown) {
         console.error("Error creating payment intent:", error);
+        if (error instanceof Error) {
+          console.error("Error message:", error.message);
+        }
+        if (error && typeof error === "object" && "response" in error) {
+          const axiosError = error as { response?: { data?: unknown } };
+          console.error("Response error:", axiosError.response?.data);
+        }
         const errorMessage =
           error instanceof Error
             ? error.message
             : "Failed to initialize payment. Please try again.";
         setError(errorMessage);
+      } finally {
+        setLoadingPayment(false);
       }
     };
     getClientSecret();
@@ -71,6 +89,12 @@ function Payment() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setProcessing(true);
+
+    console.log("Payment submission started");
+    console.log("Stripe loaded:", !!stripe);
+    console.log("Elements loaded:", !!elements);
+    console.log("Client secret available:", !!clientSecret);
+    console.log("Card complete:", cardComplete);
 
     if (!stripe || !elements) {
       setError("Stripe has not loaded properly.");
@@ -185,64 +209,70 @@ function Payment() {
             <div className='payment-section'>
               <h3>Payment Method</h3>
 
-              <div className='payment-details'>
-                <form className='payment-detailsForm' onSubmit={handleSubmit}>
-                  <div className='payment-card-section'>
-                    <p>Card Details</p>
-                    <CardElement
-                      onChange={handleChange}
-                      options={{
-                        hidePostalCode: true,
-                        style: {
-                          base: {
-                            fontSize: "16px",
-                            color: "#424770",
-                            "::placeholder": {
-                              color: "#aab7c4",
+              {loadingPayment ? (
+                <div className='payment-loading'>
+                  <p>Initializing payment...</p>
+                </div>
+              ) : (
+                <div className='payment-details'>
+                  <form className='payment-detailsForm' onSubmit={handleSubmit}>
+                    <div className='payment-card-section'>
+                      <p>Card Details</p>
+                      <CardElement
+                        onChange={handleChange}
+                        options={{
+                          hidePostalCode: true,
+                          style: {
+                            base: {
+                              fontSize: "16px",
+                              color: "#424770",
+                              "::placeholder": {
+                                color: "#aab7c4",
+                              },
+                            },
+                            invalid: {
+                              color: "#9e2146",
                             },
                           },
-                          invalid: {
-                            color: "#9e2146",
-                          },
-                        },
-                      }}
-                    />
-                  </div>
+                        }}
+                      />
+                    </div>
 
-                  <div className='payment-priceContainer'>
-                    <NumericFormat
-                      renderText={(value) => (
-                        <h3>
-                          Order Total : <strong>{value}</strong>
-                        </h3>
-                      )}
-                      decimalScale={2}
-                      value={getBasketTotal(basket)}
-                      displayType={"text"}
-                      thousandSeparator={true}
-                      prefix={"$"}
-                    />
-                    <button
-                      type='submit'
-                      disabled={
-                        !stripe ||
-                        processing ||
-                        succeeded ||
-                        basket.length === 0 ||
-                        !cardComplete
-                      }>
-                      <span>
-                        {processing
-                          ? "Processing..."
-                          : succeeded
-                          ? "Payment Successful!"
-                          : `Pay $${getBasketTotal(basket).toFixed(2)}`}
-                      </span>
-                    </button>
-                  </div>
-                  {error && <div className='payment-error'>{error}</div>}
-                </form>
-              </div>
+                    <div className='payment-priceContainer'>
+                      <NumericFormat
+                        renderText={(value) => (
+                          <h3>
+                            Order Total : <strong>{value}</strong>
+                          </h3>
+                        )}
+                        decimalScale={2}
+                        value={getBasketTotal(basket)}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"$"}
+                      />
+                      <button
+                        type='submit'
+                        disabled={
+                          !stripe ||
+                          processing ||
+                          succeeded ||
+                          basket.length === 0 ||
+                          !cardComplete
+                        }>
+                        <span>
+                          {processing
+                            ? "Processing..."
+                            : succeeded
+                            ? "Payment Successful!"
+                            : `Pay $${getBasketTotal(basket).toFixed(2)}`}
+                        </span>
+                      </button>
+                    </div>
+                    {error && <div className='payment-error'>{error}</div>}
+                  </form>
+                </div>
+              )}
             </div>
           </>
         )}
